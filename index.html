@@ -6,14 +6,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Food Name Generator</title>
+<title>Name Generator</title>
 
 <style>
 
 body{
 margin:0;
 font-family:"Comic Sans MS", Arial;
-background:#fff0f6;
+background:#fff4f8;
 }
 
 /* NAVBAR */
@@ -28,16 +28,9 @@ align-items:center;
 }
 
 .logo{
-font-size:34px;
+font-size:32px;
 font-weight:bold;
-color:#ff4f8b;
-}
-
-.menu a{
-margin-left:30px;
-text-decoration:none;
-color:#555;
-font-size:22px;
+color:#ff5c9a;
 }
 
 /* MAIN */
@@ -53,20 +46,18 @@ text-align:center;
 .card{
 background:white;
 padding:60px;
-border-radius:20px;
+border-radius:25px;
 box-shadow:0 15px 30px rgba(0,0,0,0.08);
 }
 
-/* TITLE */
-
 h1{
-font-size:60px;
-color:#ff4f8b;
+font-size:56px;
+color:#ff5c9a;
 margin-bottom:20px;
 }
 
 p{
-font-size:26px;
+font-size:24px;
 }
 
 /* BUTTON */
@@ -108,18 +99,12 @@ background:#ffd4e6;
 margin:60px 0;
 }
 
-/* INFO SECTION */
+/* INFO */
 
 .info{
-text-align:left;
+font-size:22px;
+line-height:1.7;
 color:#555;
-line-height:1.8;
-font-size:24px;
-}
-
-.info h2{
-font-size:40px;
-color:#ff4f8b;
 }
 
 /* FOOTER */
@@ -130,7 +115,7 @@ padding:40px;
 background:white;
 text-align:center;
 color:#777;
-font-size:20px;
+font-size:18px;
 }
 
 </style>
@@ -142,13 +127,7 @@ font-size:20px;
 <div class="navbar">
 
 <div class="logo">
-🍓 GeneratorHub
-</div>
-
-<div class="menu">
-<a href="#">Home</a>
-<a href="#">Generators</a>
-<a href="#">About</a>
+✨ Name Generator
 </div>
 
 </div>
@@ -157,13 +136,13 @@ font-size:20px;
 
 <div class="card">
 
-<h1>🍰 Food Name Generator</h1>
+<h1>Random Name Generator</h1>
 
-<p>Generate cute and creative food names instantly!</p>
+<p>Click the button to generate a random name.</p>
 
-<button onclick="generate()">✨ Generate Name ✨</button>
+<button onclick="generate()">Generate Name</button>
 
-<div id="result">Your cute food name will appear here 🍓</div>
+<div id="result">Your name will appear here</div>
 
 </div>
 
@@ -171,16 +150,9 @@ font-size:20px;
 
 <div class="info">
 
-<h2>🍩 About This Generator</h2>
-
 <p>
-This cute food name generator helps you create fun and creative names
-for cafes, restaurants, dessert menus, and recipes.
-</p>
-
-<p>
-Click the button above to generate a random food name instantly.
-Perfect for creative ideas and menu inspiration!
+This random name generator creates simple names for projects,
+characters, businesses, usernames, and more.
 </p>
 
 </div>
@@ -188,30 +160,25 @@ Perfect for creative ideas and menu inspiration!
 </div>
 
 <div class="footer">
-🍓 © 2026 GeneratorHub
+© 2026 Name Generator
 </div>
 
 <script>
 
-const a=[
-"Sweet","Golden","Fluffy","Crispy","Honey","Pink"
+const first=[
+"Alex","Jamie","Chris","Taylor","Jordan","Morgan","Sam","Casey"
 ];
 
-const b=[
-"Strawberry","Chocolate","Peach","Berry","Vanilla"
-];
-
-const c=[
-"Cake","Donut","Cupcake","Pancake","Dessert"
+const last=[
+"Smith","Brown","Taylor","Johnson","Lee","Walker","Clark","Hill"
 ];
 
 function generate(){
 
-let x=a[Math.floor(Math.random()*a.length)];
-let y=b[Math.floor(Math.random()*b.length)];
-let z=c[Math.floor(Math.random()*c.length)];
+let a=first[Math.floor(Math.random()*first.length)];
+let b=last[Math.floor(Math.random()*last.length)];
 
-document.getElementById("result").innerText=x+" "+y+" "+z;
+document.getElementById("result").innerText=a+" "+b;
 
 }
 

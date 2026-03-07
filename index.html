@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Name Generator</title>
+<title>Food Name Generator</title>
 
 <style>
 
@@ -23,12 +23,11 @@ background:white;
 padding:25px 50px;
 box-shadow:0 4px 12px rgba(0,0,0,0.08);
 display:flex;
-justify-content:space-between;
-align-items:center;
+justify-content:center;
 }
 
 .logo{
-font-size:32px;
+font-size:34px;
 font-weight:bold;
 color:#ff5c9a;
 }
@@ -91,22 +90,6 @@ border-radius:20px;
 display:inline-block;
 }
 
-/* DIVIDER */
-
-.divider{
-height:2px;
-background:#ffd4e6;
-margin:60px 0;
-}
-
-/* INFO */
-
-.info{
-font-size:22px;
-line-height:1.7;
-color:#555;
-}
-
 /* FOOTER */
 
 .footer{
@@ -125,60 +108,59 @@ font-size:18px;
 <body>
 
 <div class="navbar">
-
-<div class="logo">
-✨ Name Generator
-</div>
-
+<div class="logo">🍽 Food Name Generator</div>
 </div>
 
 <div class="container">
 
 <div class="card">
 
-<h1>Random Name Generator</h1>
+<h1>Random Food Generator</h1>
 
-<p>Click the button to generate a random name.</p>
+<p>Click the button to generate a food name.</p>
 
-<button onclick="generate()">Generate Name</button>
+<button onclick="generate()">Generate Food</button>
 
-<div id="result">Your name will appear here</div>
-
-</div>
-
-<div class="divider"></div>
-
-<div class="info">
-
-<p>
-This random name generator creates simple names for projects,
-characters, businesses, usernames, and more.
-</p>
+<div id="result">Your food name will appear here</div>
 
 </div>
 
 </div>
 
 <div class="footer">
-© 2026 Name Generator
+© 2026 Food Generator
 </div>
 
 <script>
 
-const first=[
-"Alex","Jamie","Chris","Taylor","Jordan","Morgan","Sam","Casey"
-];
-
-const last=[
-"Smith","Brown","Taylor","Johnson","Lee","Walker","Clark","Hill"
+const foods=[
+"Pizza",
+"Burger",
+"Sushi",
+"Pasta",
+"Taco",
+"Ramen",
+"Steak",
+"Salad",
+"Sandwich",
+"Dumplings",
+"Fried Rice",
+"Noodles",
+"Curry",
+"Hot Dog",
+"Kebab",
+"Chicken Wings",
+"Lasagna",
+"Soup",
+"BBQ Ribs",
+"Fish and Chips"
 ];
 
 function generate(){
 
-let a=first[Math.floor(Math.random()*first.length)];
-let b=last[Math.floor(Math.random()*last.length)];
+let food=foods[Math.floor(Math.random()*foods.length)];
 
-document.getElementById("result").innerText=a+" "+b;
+document.getElementById("result").innerText=food;
 
 }
 

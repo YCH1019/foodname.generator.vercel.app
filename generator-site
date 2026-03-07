@@ -1,0 +1,22 @@
+generator-site
+│
+├ index.html
+├ style.css
+├ script.js
+│
+├ generators
+│   ├ food-name.html
+│   ├ restaurant-name.html
+│   ├ cafe-name.html
+│   ├ fantasy-name.html
+│   ├ character-name.html
+│   └ ... (총 20개)
+│
+├ seo
+│   ├ best-food-names.html
+│   ├ cafe-name-ideas.html
+│   ├ dessert-name-list.html
+│   └ ... (200개)
+│
+└ data
+    └ names.json

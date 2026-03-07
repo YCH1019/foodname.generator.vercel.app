@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Food Name Generator</title>
+<title>Random Food Picker</title>
 
 <style>
 
@@ -108,38 +108,39 @@ font-size:18px;
 <body>
 
 <div class="navbar">
-<div class="logo">🍽 Food Name Generator</div>
+<div class="logo">🍽 Food Picker</div>
 </div>
 
 <div class="container">
 
 <div class="card">
 
-<h1>Random Food Generator</h1>
+<h1>Random Food Picker</h1>
 
-<p>Click the button to generate a food name.</p>
+<p>Click the button and choose a random food!</p>
 
-<button onclick="generate()">Generate Food</button>
+<button onclick="pickFood()">Pick Food</button>
 
-<div id="result">Your food name will appear here</div>
+<div id="result">Your food will appear here</div>
 
 </div>
 
 </div>
 
 <div class="footer">
-© 2026 Food Generator
+© 2026 Food Picker
 </div>
 
 <script>
 
 const foods=[
+
 "Pizza",
 "Burger",
 "Sushi",
+"Ramen",
 "Pasta",
 "Taco",
-"Ramen",
 "Steak",
 "Salad",
 "Sandwich",
@@ -153,14 +154,25 @@ const foods=[
 "Lasagna",
 "Soup",
 "BBQ Ribs",
-"Fish and Chips"
+"Fish and Chips",
+"Spaghetti",
+"Pho",
+"Tempura",
+"Bibimbap",
+"Kimchi Stew",
+"Pad Thai",
+"Nachos",
+"Fried Chicken",
+"Grilled Cheese",
+"Mac and Cheese"
+
 ];
 
-function generate(){
+function pickFood(){
 
-let food=foods[Math.floor(Math.random()*foods.length)];
+let randomFood = foods[Math.floor(Math.random()*foods.length)];
 
-document.getElementById("result").innerText=food;
+document.getElementById("result").innerText = randomFood;
 
 }
 

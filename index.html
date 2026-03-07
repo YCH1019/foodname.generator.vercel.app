@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Cute Food Name Generator</title>
+
+<meta name="description" content="Cute food name generator">
+
+<style>
+
+body{
+font-family:Arial;
+background:#ffeef5;
+text-align:center;
+margin-top:100px;
+}
+
+h1{
+color:#ff4f8b;
+}
+
+button{
+background:#ff8dc7;
+border:none;
+padding:15px 30px;
+font-size:18px;
+border-radius:20px;
+color:white;
+cursor:pointer;
+}
+
+#result{
+margin-top:30px;
+font-size:28px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🍓 Food Name Generator</h1>
+
+<p>Click the button!</p>
+
+<button onclick="generate()">Generate</button>
+
+<div id="result"></div>
+
+<script>
+
+const a=[
+"Sweet","Honey","Pink","Golden","Fluffy"
+];
+
+const b=[
+"Strawberry","Peach","Chocolate","Berry"
+];
+
+const c=[
+"Cake","Donut","Cupcake","Pancake"
+];
+
+function generate(){
+
+let x=a[Math.floor(Math.random()*a.length)];
+let y=b[Math.floor(Math.random()*b.length)];
+let z=c[Math.floor(Math.random()*c.length)];
+
+document.getElementById("result").innerText=x+" "+y+" "+z;
+
+}
+
+</script>
+
+</body>
+
+</html>

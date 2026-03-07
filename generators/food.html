@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Food Name Generator</title>
+</head>
+
+<body>
+
+<h1>Food Name Generator</h1>
+
+<button onclick="generate()">Generate</button>
+
+<div id="result"></div>
+
+<script>
+
+const adj=["Sweet","Golden","Fluffy","Happy"]
+const food=["Strawberry Cake","Berry Pancake","Chocolate Donut"]
+
+function generate(){
+
+let a=adj[Math.floor(Math.random()*adj.length)]
+let b=food[Math.floor(Math.random()*food.length)]
+
+document.getElementById("result").innerText=a+" "+b
+
+}
+
+</script>
+
+</body>
+</html>

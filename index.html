@@ -1,143 +1,615 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Random Food Picker</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>God Chooses For You — Generators</title>
 <style>
+  :root{
+    --pink-1:#fff0f6;
+    --pink-2:#ffd4e6;
+    --accent:#ff5c9a;
+    --accent-2:#ff8dc7;
+    --muted:#6b6b6b;
+    --card-bg:#ffffff;
+    --shadow: 0 12px 30px rgba(18,18,18,0.06);
+    --radius-lg:20px;
+    --radius-md:12px;
+  }
+  /* Reset & base */
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family: "Inter", "Spoqa Han Sans", "Comic Sans MS", Arial, sans-serif;color:#222;}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit}
+  /* Layout */
+  .page{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background:linear-gradient(180deg, var(--pink-1) 0%, #fffefc 100%);
+  }
 
-body{
-margin:0;
-font-family:Arial;
-background:#fff4f8;
-text-align:center;
-}
+  /* Header occupying ~1/3 of viewport */
+  header.hero{
+    height:33vh; /* 약 삼분의일 */
+    min-height:180px;
+    max-height:260px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: linear-gradient(135deg, #fff4fb 0%, var(--pink-2) 100%);
+    border-bottom: 2px solid rgba(255,221,233,0.7);
+  }
+  .hero-inner{
+    width:100%;
+    max-width:1100px;
+    padding:18px;
+    display:flex;
+    gap:24px;
+    align-items:center;
+    justify-content:center;
+  }
+  .hero-card{
+    width:100%;
+    background:var(--card-bg);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:18px 26px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+  }
+  .title-block{
+    flex:1;
+    text-align:center;
+    padding:8px 4px;
+  }
+  h1.title{
+    margin:0;
+    font-size:32px;
+    line-height:1.05;
+    color:var(--accent);
+    letter-spacing:0.6px;
+  }
+  p.tagline{
+    margin:8px 0 0 0;
+    color:var(--muted);
+    font-size:15px;
+  }
+  p.helper{
+    margin:6px 0 0 0;
+    color:#9e6f8f;
+    font-weight:600;
+    font-size:14px;
+  }
 
-/* header */
+  /* Main content */
+  main.content{
+    max-width:1100px;
+    margin:28px auto;
+    width:calc(100% - 40px);
+    display:flex;
+    gap:28px;
+    flex-direction:column;
+  }
 
-header{
-background:white;
-padding:40px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-}
+  /* Button grid (2 columns x 3 rows) */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+  }
 
-h1{
-color:#ff5c9a;
-font-size:48px;
-}
+  .thumb{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:18px;
+    background:linear-gradient(180deg,#fff,#fff7fb);
+    border-radius:14px;
+    box-shadow: 0 8px 20px rgba(255,120,150,0.06);
+    border:1px solid rgba(255,140,180,0.12);
+    cursor:pointer;
+    transition: transform .16s ease, box-shadow .16s ease;
+  }
+  .thumb:hover{ transform: translateY(-6px); box-shadow: 0 18px 36px rgba(255,140,180,0.12); }
+  .thumb .thumb-icon{
+    width:84px; height:84px; min-width:84px;
+    border-radius:12px;
+    background: linear-gradient(135deg,var(--accent) 0%, var(--accent-2) 100%);
+    display:flex; align-items:center; justify-content:center;
+    font-size:34px; color:white; box-shadow: 0 8px 18px rgba(255,95,130,0.18);
+  }
+  .thumb .thumb-text{
+    display:flex;flex-direction:column;align-items:flex-start;
+  }
+  .thumb .thumb-text .name{
+    font-size:20px; font-weight:700; color:#3b0a1d;
+  }
+  .thumb .thumb-text .desc{
+    margin-top:6px; color:var(--muted); font-size:13px;
+  }
 
-/* container */
+  /* Separator line under grid */
+  .divider{height:1px;background:linear-gradient(90deg, rgba(255,140,180,0.05), rgba(0,0,0,0.03)); margin:8px 0 22px 0;border-radius:6px}
 
-.container{
-margin-top:80px;
-}
+  /* Generator sections */
+  .panel{
+    background:var(--card-bg);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:26px;
+    display:none; /* initially hidden, shown when active */
+  }
+  .panel.active{display:block}
+  .panel h2{margin:0 0 8px 0; color:var(--accent); font-size:28px}
+  .panel p.lead{margin:0 0 18px 0; color:var(--muted)}
+  .controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .btn{
+    background:linear-gradient(180deg,var(--accent) 0%, var(--accent-2) 100%);
+    color:white;border:none;padding:10px 18px;border-radius:12px;font-weight:700;cursor:pointer;
+    box-shadow:0 8px 20px rgba(255,105,150,0.12); transition:transform .12s ease;
+  }
+  .btn.secondary{
+    background: #fff; color:var(--accent); border:1px solid rgba(255,90,140,0.14);
+    box-shadow:none;
+  }
+  .btn:active{transform:translateY(2px)}
+  .result{
+    margin-top:14px;
+    background: linear-gradient(180deg,#fff7fb,#fff0f6);
+    border-radius:12px;
+    padding:20px;
+    font-size:28px;
+    color:#3b0a1d;
+    font-weight:800;
+    text-align:center;
+    box-shadow: 0 10px 26px rgba(255,110,150,0.06);
+  }
+  .small{font-size:14px;color:var(--muted);margin-top:10px;text-align:center}
+  .back-home{margin-top:18px;text-align:center}
+  .back-home a{color:var(--accent);font-weight:700;text-decoration:none}
 
-/* button */
-
-button{
-background:#ff8dc7;
-border:none;
-color:white;
-padding:20px 40px;
-font-size:26px;
-border-radius:40px;
-cursor:pointer;
-transition:0.2s;
-}
-
-button:hover{
-background:#ff6fb3;
-transform:scale(1.05);
-}
-
-/* result */
-
-#result{
-margin-top:40px;
-font-size:36px;
-font-weight:bold;
-background:white;
-display:inline-block;
-padding:25px 40px;
-border-radius:15px;
-box-shadow:0 10px 20px rgba(0,0,0,0.08);
-}
-
+  /* Footer */
+  footer{margin:40px auto 60px; text-align:center; color:var(--muted)}
+  /* Responsive */
+  @media (max-width:880px){
+    .grid{grid-template-columns:repeat(1,1fr)}
+    .hero-inner{flex-direction:column}
+    .thumb .thumb-icon{width:72px;height:72px;min-width:72px}
+    header.hero{height:auto;padding:28px 14px}
+  }
 </style>
-
 </head>
-
 <body>
+<div class="page">
 
-<header>
+  <!-- HERO / HEADER -->
+  <header class="hero" role="banner" aria-label="hero">
+    <div class="hero-inner">
+      <div class="hero-card" role="presentation">
+        <div class="title-block">
+          <!-- English title requested -->
+          <h1 class="title">God Chooses For You</h1>
+          <!-- three-line display: subtitle, explanation, prompt -->
+          <p class="tagline">Can't decide? Let fate pick it — cute, quick, and random.</p>
+          <p class="helper">Pick one of the tiles below — the divine micro-decision maker awaits ✨</p>
+        </div>
+      </div>
+    </div>
+  </header>
 
-<h1>🍔 Random Food Picker</h1>
-<p>Click the button to choose a random food</p>
+  <!-- MAIN -->
+  <main class="content" role="main">
 
-</header>
+    <!-- GRID OF THUMBNAILS -->
+    <section class="grid" aria-label="generators">
+      <!-- Thumb 1: Dinner -->
+      <div class="thumb" data-target="panel-dinner" role="button" tabindex="0" onclick="openPanel('panel-dinner')">
+        <div class="thumb-icon">🍽</div>
+        <div class="thumb-text">
+          <div class="name">Dinner Picker</div>
+          <div class="desc">Pick a dinner instantly</div>
+        </div>
+      </div>
 
-<div class="container">
+      <!-- Thumb 2: Dog name -->
+      <div class="thumb" data-target="panel-dog" role="button" tabindex="0" onclick="openPanel('panel-dog')">
+        <div class="thumb-icon">🐶</div>
+        <div class="thumb-text">
+          <div class="name">Dog Name Generator</div>
+          <div class="desc">Find a cute dog name</div>
+        </div>
+      </div>
 
-<button onclick="pickFood()">
-Pick Food
-</button>
+      <!-- Thumb 3: Workout -->
+      <div class="thumb" data-target="panel-workout" role="button" tabindex="0" onclick="openPanel('panel-workout')">
+        <div class="thumb-icon">🏋️‍♀️</div>
+        <div class="thumb-text">
+          <div class="name">Workout Picker</div>
+          <div class="desc">Decide today's exercise</div>
+        </div>
+      </div>
 
-<div id="result">
-Your food will appear here
+      <!-- Thumb 4: Compliment -->
+      <div class="thumb" data-target="panel-compliment" role="button" tabindex="0" onclick="openPanel('panel-compliment')">
+        <div class="thumb-icon">💖</div>
+        <div class="thumb-text">
+          <div class="name">Pretty Words For You</div>
+          <div class="desc">Get a sweet compliment</div>
+        </div>
+      </div>
+
+      <!-- Thumb 5: Game nickname -->
+      <div class="thumb" data-target="panel-nick" role="button" tabindex="0" onclick="openPanel('panel-nick')">
+        <div class="thumb-icon">🎮</div>
+        <div class="thumb-text">
+          <div class="name">Game Nickname</div>
+          <div class="desc">Create a cool nickname</div>
+        </div>
+      </div>
+
+      <!-- Thumb 6: Outfit color -->
+      <div class="thumb" data-target="panel-color" role="button" tabindex="0" onclick="openPanel('panel-color')">
+        <div class="thumb-icon">👗</div>
+        <div class="thumb-text">
+          <div class="name">Outfit Color</div>
+          <div class="desc">Choose today's color</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider" role="separator"></div>
+
+    <!-- PANELS / GENERATORS -->
+    <!-- Panel: Dinner -->
+    <section id="panel-dinner" class="panel" aria-hidden="true">
+      <h2>🍽 Dinner Picker</h2>
+      <p class="lead">Can't decide what to eat for dinner? Let this picker choose for you.</p>
+
+      <div class="controls">
+        <button class="btn" onclick="pickDinner()">Pick Dinner</button>
+        <button class="btn secondary" onclick="shuffleDinner()">Shuffle List</button>
+        <button class="btn secondary" onclick="closePanel('panel-dinner')">Close</button>
+      </div>
+
+      <div id="result-dinner" class="result">Press "Pick Dinner" to begin</div>
+      <div class="small">Want more variety? Use "Shuffle List" to change suggestions.</div>
+      <div class="back-home"><a href="#" onclick="goHome()">← Back to Home</a></div>
+    </section>
+
+    <!-- Panel: Dog names -->
+    <section id="panel-dog" class="panel" aria-hidden="true">
+      <h2>🐶 Dog Name Generator</h2>
+      <p class="lead">Looking for a name for your pup? Cute, classic, or quirky — pick or generate again.</p>
+
+      <div class="controls">
+        <button class="btn" onclick="pickDog()">Generate Name</button>
+        <button class="btn secondary" onclick="shuffleDog()">Shuffle List</button>
+        <button class="btn secondary" onclick="closePanel('panel-dog')">Close</button>
+      </div>
+
+      <div id="result-dog" class="result">Your pup's name will appear here</div>
+      <div class="small">Click generate until you find the perfect fit 🐾</div>
+      <div class="back-home"><a href="#" onclick="goHome()">← Back to Home</a></div>
+    </section>
+
+    <!-- Panel: Workout -->
+    <section id="panel-workout" class="panel" aria-hidden="true">
+      <h2>🏋️‍♀️ Workout Picker</h2>
+      <p class="lead">Short on time? Let the app pick a workout — warmups, cardio, strength, or stretch.</p>
+
+      <div class="controls">
+        <button class="btn" onclick="pickWorkout()">Pick Workout</button>
+        <button class="btn secondary" onclick="shuffleWorkout()">Shuffle List</button>
+        <button class="btn secondary" onclick="closePanel('panel-workout')">Close</button>
+      </div>
+
+      <div id="result-workout" class="result">Your workout plan will appear here</div>
+      <div class="small">Each pick includes a simple description — adapt to your level.</div>
+      <div class="back-home"><a href="#" onclick="goHome()">← Back to Home</a></div>
+    </section>
+
+    <!-- Panel: Compliment -->
+    <section id="panel-compliment" class="panel" aria-hidden="true">
+      <h2>💖 Pretty Words For You</h2>
+      <p class="lead">A little kindness goes a long way. Receive a warm compliment now.</p>
+
+      <div class="controls">
+        <button class="btn" onclick="pickCompliment()">Give Me a Compliment</button>
+        <button class="btn secondary" onclick="shuffleCompliment()">Shuffle</button>
+        <button class="btn secondary" onclick="closePanel('panel-compliment')">Close</button>
+      </div>
+
+      <div id="result-compliment" class="result">You are lovely — press the button!</div>
+      <div class="small">Save your favorite compliments to re-read later ✨</div>
+      <div class="back-home"><a href="#" onclick="goHome()">← Back to Home</a></div>
+    </section>
+
+    <!-- Panel: Game Nickname -->
+    <section id="panel-nick" class="panel" aria-hidden="true">
+      <h2>🎮 Game Nickname Generator</h2>
+      <p class="lead">Want a memorable handle? Generate a nickname — funky, fierce, or funny.</p>
+
+      <div class="controls">
+        <button class="btn" onclick="pickNickname()">Generate Nickname</button>
+        <button class="btn secondary" onclick="shuffleNickname()">Shuffle Word Lists</button>
+        <button class="btn secondary" onclick="closePanel('panel-nick')">Close</button>
+      </div>
+
+      <div id="result-nick" class="result">Your gamer tag will appear here</div>
+      <div class="small">Try again to get different vibes — or combine favorites.</div>
+      <div class="back-home"><a href="#" onclick="goHome()">← Back to Home</a></div>
+    </section>
+
+    <!-- Panel: Outfit Color -->
+    <section id="panel-color" class="panel" aria-hidden="true">
+      <h2>👗 Outfit Color Picker</h2>
+      <p class="lead">Not sure what to wear? Pick a color to base today's outfit on.</p>
+
+      <div class="controls">
+        <button class="btn" onclick="pickColor()">Pick Color</button>
+        <button class="btn secondary" onclick="shuffleColor()">Shuffle Palette</button>
+        <button class="btn secondary" onclick="closePanel('panel-color')">Close</button>
+      </div>
+
+      <div id="result-color" class="result">Your outfit color will appear here</div>
+      <div class="small">Each color includes a short style tip.</div>
+      <div class="back-home"><a href="#" onclick="goHome()">← Back to Home</a></div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div style="max-width:1100px;margin:26px auto 60px auto;color:var(--muted);text-align:center">
+      © 2026 God Chooses For You — small playful decision helpers
+    </div>
+  </footer>
+
 </div>
 
-</div>
-
+<!-- DATA + SCRIPTS -->
 <script>
+/* --------------------
+   DATA: lists for each generator
+   (reasonably large sets so results feel varied)
+   -------------------- */
 
-const foods=[
-
-"Pizza",
-"Burger",
-"Sushi",
-"Ramen",
-"Pasta",
-"Taco",
-"Steak",
-"Salad",
-"Sandwich",
-"Dumplings",
-"Fried Rice",
-"Noodles",
-"Curry",
-"Hot Dog",
-"Kebab",
-"Chicken Wings",
-"Lasagna",
-"Soup",
-"BBQ Ribs",
-"Fish and Chips",
-"Spaghetti",
-"Pho",
-"Tempura",
-"Bibimbap",
-"Pad Thai",
-"Nachos",
-"Fried Chicken",
-"Grilled Cheese",
-"Mac and Cheese"
-
+/* Dinner foods (mix of global / korean / comfort / easy) */
+let dinnerFoods = [
+  "Margherita Pizza","Cheeseburger","Sushi Set","Spicy Ramen","Seafood Pasta",
+  "Tacos al Pastor","Grilled Steak","Caesar Salad","Chicken Alfredo","Korean BBQ (Bulgogi)",
+  "Bibimbap","Kimchi Stew (Kimchi Jjigae)","Fried Chicken (KFC style)","Fish & Chips",
+  "Pad Thai","Beef Stir-fry","Teriyaki Salmon","Shrimp Scampi","Vegetable Curry",
+  "Butter Chicken","Chicken Katsu","Poke Bowl","Gnocchi in Cream Sauce","Miso-glazed Cod",
+  "Lamb Chops","Penne Arrabiata","Banh Mi","Souvlaki","Paella",
+  "Ratatouille","Veggie Burger","Steamed Dumplings","Chicken Noodle Soup","Goulash",
+  "Hot Pot","Sausage & Mash","Burrito Bowl","Shakshuka","Tofu Stir-fry",
+  "Sichuan Mapo Tofu","Nasi Goreng","Curry Udon","Clam Chowder","Mussels in White Wine",
+  "Fajitas","Korean Fried Rice (Bokkeumbap)","Okonomiyaki","Takoyaki","Chili Con Carne",
+  "Grilled Veg & Halloumi","Roast Chicken with Veg","Lasagna","Shepherd's Pie","Caprese Salad"
 ];
 
-function pickFood(){
+/* Dog names (male/female/cute/classic) */
+let dogNames = [
+  "Buddy","Bella","Charlie","Luna","Max","Lucy","Cooper","Daisy","Rocky","Molly",
+  "Bailey","Sadie","Toby","Maggie","Bear","Lola","Jack","Chloe","Duke","Roxy",
+  "Oliver","Sophie","Leo","Zoey","Finn","Ruby","Oscar","Poppy","Harley","Nala",
+  "Bentley","Millie","Gus","Lulu","Baxter","Lily","Zeus","Mimi","Winston","Penny",
+  "Bruno","Rosie","Murphy","Maya","Kobe","Zoe","Ranger","Honey","Rex","Coco",
+  "Apollo","Sasha","Thor","Angel","Sammy","Mochi","Ranger","Nico","Biscuit","Miso"
+];
 
-let randomFood =
-foods[Math.floor(Math.random()*foods.length)];
+/* Workout ideas (quick to longer) */
+let workouts = [
+  "20-min HIIT (jumping jacks, burpees, mountain climbers)", 
+  "30-min brisk walk or jog",
+  "Upper body strength (push-ups, dumbbell rows, shoulder press)",
+  "Lower body strength (squats, lunges, glute bridges)",
+  "Core blast (plank series, bicycle crunches)",
+  "Yoga flow (20 min gentle)",
+  "Pilates core session",
+  "Full-body circuit (3 rounds)",
+  "Tabata sprint intervals",
+  "Stretch & mobility (15 min)",
+  "Walk + stairs (30 min)",
+  "Resistance band workout",
+  "Kettlebell swing session",
+  "Bodyweight AMRAP 15 min",
+  "Boxing shadow work (20 min)",
+  "Dance cardio party (20–30 min)",
+  "Hill sprints (10 rounds)",
+  "Calisthenics routine (pull-ups/push-ups/squats)",
+  "Cardio machine session (bike/rower) 30 min",
+  "Slow long walk (45–60 min)"
+];
 
-document.getElementById("result").innerText = randomFood;
+/* Compliments / pretty words */
+let compliments = [
+  "You light up the room with your smile.",
+  "Your kindness makes the world better.",
+  "You're braver than you feel right now.",
+  "You have such a lovely way with people.",
+  "Your taste is effortlessly elegant.",
+  "You're a breath of fresh air.",
+  "Your laugh is contagious and warm.",
+  "You make ordinary moments feel special.",
+  "Your creativity is inspiring.",
+  "You're strong, gentle, and capable.",
+  "There's a calm confidence about you.",
+  "You radiate good energy.",
+  "You handle challenges with grace.",
+  "You're someone people trust and admire.",
+  "You bring color to people's lives.",
+  "You're more capable than you know.",
+  "Your empathy is rare and precious.",
+  "You have an amazing sense of humor.",
+  "Your style is uniquely charming.",
+  "You deserve all the small joys today."
+];
 
+/* Game nickname parts */
+let nickAdj = [
+  "Shadow","Neo","Silent","Blaze","Crimson","Frost","Iron","Lucky","Phantom","Nova",
+  "Quantum","Rogue","Viper","Swift","Mystic","Savage","Golden","Valk","Neon","Prime",
+  "Silent","Lucky","Solar","Lunar","Thunder","Echo","Ghost","Turbo","Pixel","Arcane"
+];
+let nickNoun = [
+  "Tiger","Rider","Blade","Warden","Fox","Hunter","Knight","Dragon","Ranger","Sniper",
+  "Ninja","Reaper","Sentinel","Hawk","Wolf","Pirate","Monk","Wizard","Guardian","Vortex",
+  "Spartan","Rogue","Marshal","Samurai","Corsair","Ronin","Juggernaut","Specter","Dynamo","Marauder"
+];
+
+/* Outfit colors + short tip */
+let outfitColors = [
+  {color:"Soft Pink", tip:"Pair with denim for casual sweetness."},
+  {color:"Navy Blue", tip:"Classic and slimming; gold accessories pop."},
+  {color:"Olive Green", tip:"Earthy tones and neutral shoes work well."},
+  {color:"Mustard", tip:"Great with browns or dark denim."},
+  {color:"Charcoal Gray", tip:"Polished and modern; try textures."},
+  {color:"Cream", tip:"Light and airy; avoid heavy dark accents."},
+  {color:"Burgundy", tip:"Sophisticated — pair with black boots."},
+  {color:"Sky Blue", tip:"Fresh and bright — white sneakers match."},
+  {color:"Lavender", tip:"Soft and feminine; silver accessories."},
+  {color:"Tan", tip:"Neutral base — layer with patterns."},
+  {color:"Olive", tip:"Casual chic; great with leather."},
+  {color:"Black", tip:"Timeless and versatile; try a statement necklace."},
+  {color:"White", tip:"Clean & minimal; avoid see-through fabrics."},
+  {color:"Coral", tip:"Vibrant — let it be the outfit's focus."},
+  {color:"Teal", tip:"Rich and flattering; pair with neutrals."}
+];
+
+/* --------------------
+   Small util functions
+   -------------------- */
+function rnd(arr){
+  return arr[Math.floor(Math.random()*arr.length)];
 }
 
-</script>
+/* --------------------
+   Dinner Picker
+   -------------------- */
+function pickDinner(){
+  const pick = rnd(dinnerFoods);
+  document.getElementById('result-dinner').innerText = pick;
+}
+function shuffleDinner(){
+  // example simple shuffle: reverse slice for variety
+  dinnerFoods = dinnerFoods.sort(()=>Math.random()-0.5);
+  document.getElementById('result-dinner').innerText = "List shuffled — press Pick Dinner";
+}
 
+/* --------------------
+   Dog Name Generator
+   -------------------- */
+function pickDog(){
+  const pick = rnd(dogNames);
+  document.getElementById('result-dog').innerText = pick;
+}
+function shuffleDog(){
+  dogNames = dogNames.sort(()=>Math.random()-0.5);
+  document.getElementById('result-dog').innerText = "List shuffled — press Generate Name";
+}
+
+/* --------------------
+   Workout Picker
+   -------------------- */
+function pickWorkout(){
+  const pick = rnd(workouts);
+  document.getElementById('result-workout').innerText = pick;
+}
+function shuffleWorkout(){
+  workouts = workouts.sort(()=>Math.random()-0.5);
+  document.getElementById('result-workout').innerText = "List shuffled — press Pick Workout";
+}
+
+/* --------------------
+   Compliment Picker
+   -------------------- */
+function pickCompliment(){
+  const pick = rnd(compliments);
+  document.getElementById('result-compliment').innerText = pick;
+}
+function shuffleCompliment(){
+  compliments = compliments.sort(()=>Math.random()-0.5);
+  document.getElementById('result-compliment').innerText = "List shuffled — press for a compliment";
+}
+
+/* --------------------
+   Nickname Generator
+   -------------------- */
+function pickNickname(){
+  const a = rnd(nickAdj);
+  const b = rnd(nickNoun);
+  // sometimes add a number or extra flair
+  const useNum = Math.random() < 0.35;
+  const num = useNum ? (Math.floor(Math.random()*99)+1) : "";
+  const sep = Math.random() < 0.5 ? "" : "_";
+  const nick = `${a}${sep}${b}${num}`;
+  document.getElementById('result-nick').innerText = nick;
+}
+function shuffleNickname(){
+  nickAdj = nickAdj.sort(()=>Math.random()-0.5);
+  nickNoun = nickNoun.sort(()=>Math.random()-0.5);
+  document.getElementById('result-nick').innerText = "Word lists shuffled — press Generate Nickname";
+}
+
+/* --------------------
+   Outfit Color Picker
+   -------------------- */
+function pickColor(){
+  const pick = rnd(outfitColors);
+  document.getElementById('result-color').innerText = `${pick.color} — ${pick.tip}`;
+}
+function shuffleColor(){
+  outfitColors = outfitColors.sort(()=>Math.random()-0.5);
+  document.getElementById('result-color').innerText = "Palette shuffled — press Pick Color";
+}
+
+/* --------------------
+   UI: open/close panels + home
+   -------------------- */
+function openPanel(id){
+  // hide all panels
+  document.querySelectorAll('.panel').forEach(p => {
+    p.classList.remove('active');
+    p.setAttribute('aria-hidden','true');
+  });
+  // show specific
+  const el = document.getElementById(id);
+  if(el){
+    el.classList.add('active');
+    el.setAttribute('aria-hidden','false');
+    // scroll into view smoothly
+    setTimeout(()=> el.scrollIntoView({behavior:'smooth', block:'start'}), 60);
+  }
+}
+function closePanel(id){
+  const el = document.getElementById(id);
+  if(el){
+    el.classList.remove('active');
+    el.setAttribute('aria-hidden','true');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+function goHome(){
+  // hide all active panels
+  document.querySelectorAll('.panel.active').forEach(p=>p.classList.remove('active'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* --------------------
+   keyboard accessibility: Enter triggers thumb
+   -------------------- */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    // close panels if open
+    document.querySelectorAll('.panel.active').forEach(p=>{
+      p.classList.remove('active');
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+});
+</script>
 </body>
 </html>
